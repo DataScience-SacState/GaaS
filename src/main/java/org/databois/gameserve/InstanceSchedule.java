@@ -20,7 +20,7 @@ public class InstanceSchedule {
     
     public static void start() {
         if (sf == null)
-            sf = scheduler.scheduleAtFixedRate(InstanceSchedule::run, 8, 8, TimeUnit.HOURS);
+            sf = scheduler.scheduleAtFixedRate(InstanceSchedule::run, 5, 5, TimeUnit.MINUTES);
     }
     
     public static void stop() {

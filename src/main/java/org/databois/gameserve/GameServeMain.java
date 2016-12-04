@@ -19,6 +19,8 @@ public class GameServeMain {
         
         APITest.deploy();
         APIDeploy.deploy();
+        
+        InstanceSchedule.start();
     }
     
 }

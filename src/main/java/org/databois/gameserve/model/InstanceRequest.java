@@ -1,20 +1,45 @@
 package org.databois.gameserve.model;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import com.avaje.ebean.Model;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.junit.Test;
 
-public class InstanceRequest {
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.io.IOException;
+import java.time.Instant;
+import java.util.UUID;
+
+@Entity
+@Table(name = "requests")
+public class InstanceRequest extends Model {
     
+    @Id
+    public long id;
+    public UUID uuid = UUID.randomUUID();
+    
+    
+    
+    public String email;
     public String type;
-    public Instant startTime;
-    public Instant endTime;
+    public Instant start;
+    public Instant end;
     
-    public Instant getStopTime() {
-        return endTime;
-    }
-    
-    public Instant getPurgeTime() {
-        return endTime.plus(12, ChronoUnit.HOURS);
+    @Test
+    public void testJson() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        
+        String json = "{" +
+                "\"email\":\"a\"," +
+                "\"type\":\"mc\"," +
+                "\"start\":\"2016-01-01T00:00:00\"," +
+                "\"end\":\"2016-01-01T00:00:00\"" +
+            "}";
+        
+        InstanceRequest req = mapper.readValue(json, getClass());
     }
     
 }

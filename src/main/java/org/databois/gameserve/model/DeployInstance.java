@@ -26,7 +26,7 @@ public class DeployInstance extends Model {
     public String email;
     
     public String type = "minecraft";
-    public UUID uuid = UUID.randomUUID();
+    public UUID uuid;
     
     public Instant stopTime;
     public Instant purgeTime;

@@ -16,12 +16,13 @@ public class APITest {
     
         try {
     
-            InstanceRequest ir = new InstanceRequest();
-            ir.type = "minecraft";
-            ir.startTime = Instant.now();
-            ir.hours = 6;
-            DeployInstance di = DeployManager.getInstance().deploy(ir);
-            EmailSender.getInstance().sendNew("mattmerr47@gmail.com", di);
+//            InstanceRequest ir = new InstanceRequest();
+//            ir.type = "minecraft";
+//            ir.startTime = Instant.now();
+//            ir.endTime = 6;
+//            DeployInstance di = DeployManager.getInstance().deploy(ir);
+//            EmailSender.getInstance().sendNew("mattmerr47@gmail.com", di);
+            
         }catch (Exception e) {
             e.printStackTrace();
         }

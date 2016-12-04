@@ -2,6 +2,8 @@ package org.databois.gameserve.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.databois.gameserve.DeployManager;
+import org.databois.gameserve.model.InstanceRequest;
+
 import static spark.Spark.*;
 
 /**
@@ -15,7 +17,7 @@ public class APIDeploy {
     public static void deploy() {
         post("/api/request", (req, res) -> {
             ObjectMapper mapper = new ObjectMapper();
-            mapper.readTree(req.body());
+            InstanceRequest request = mapper.readValue(req.body(), InstanceRequest.class);
             
             
             

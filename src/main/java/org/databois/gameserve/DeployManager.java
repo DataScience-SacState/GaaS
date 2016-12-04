@@ -6,6 +6,7 @@ import org.databois.gameserve.model.InstanceRequest;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -45,8 +46,8 @@ public class DeployManager {
         {
             instance.port = lockPort(instance.uuid);
             instance.type = req.type;
-            instance.stopTime = req.getStopTime();
-            instance.purgeTime = req.getPurgeTime();
+            instance.stopTime = req.end;
+            instance.purgeTime = req.end.plus(12, ChronoUnit.HOURS);
         }
         
         createInstanceDir(instance);
@@ -66,7 +67,7 @@ public class DeployManager {
         File targetDir = new File(instanceRoot.toURI().resolve(instance.uuid.toString()));
         
         if (targetDir.exists()) {
-            throw new IllegalArgumentException("[gameserve.DeployManager] SOMETHING BAD");
+            throw new IllegalArgumentException("[DeployManager] SOMETHING BAD");
         }
         
         FileUtils.copyDirectory(typeArch, targetDir);
