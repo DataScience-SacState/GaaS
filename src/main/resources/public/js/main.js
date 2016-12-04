@@ -1,8 +1,11 @@
-window.onload = function(){
-	var variables = new Set();
+$(document).ready(function(){
+
+	$("#startDate").val(new Date().toJSON().slice(0,19));
+	$("#endDate").val(new Date().toJSON().slice(0,19));
 
 	function GetDates(startDate, daysToAdd) {
     	var aryDates = [];
+    	var dateValues = [];
 
     	for (var i = 0; i <= daysToAdd; i++) {
         	var currentDate = new Date();
@@ -52,11 +55,27 @@ window.onload = function(){
 	for(var i = 0; i < aryDates.length; i++){
 		var opt = aryDates[i];
 		var el = document.createElement("option");
+		var currentDate = new Date();
+        currentDate.setDate(startDate.getDate() + i);
+        el.value = currentDate.toISOString();
 		el.textContent = opt;
-		select.appendChild(el);
+		//select.appendChild(el);
 	}
-	
-}
+
+	$(document.body).on('click', '.submitThings', function(){
+		var arr = [];
+		var obj = {};
+		var type = document.getElementById("game").value;
+		var email = document.getElementById("userEmail").value;
+		var start = document.getElementById("startDate").value;
+		var end = document.getElementById("endDate").value;
+		obj.type = type;
+		obj.email = email;
+		obj.start = start;
+		obj.end = end;
+		console.log(obj);
+	});
+});
 
 
 
