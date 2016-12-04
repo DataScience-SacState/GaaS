@@ -17,16 +17,20 @@ import java.util.UUID;
 @UniqueConstraint(columnNames = {"uuid"})
 public class DeployInstance extends Model {
     
+    public static final Model.Finder<Long, DeployInstance> find = new Model.Finder<>(DeployInstance.class);
+    
     @Id
     public int id;
     
     public String name;
+    public String email;
+    
     public String type = "minecraft";
     public UUID uuid = UUID.randomUUID();
     
     public Instant stopTime;
     public Instant purgeTime;
     
+    public long pid;
     public int port;
-    public String ftpDir;
 }

@@ -2,7 +2,7 @@ package org.databois.gameserve;
 
 import org.databois.gameserve.model.DeployInstance;
 import org.apache.commons.io.FileUtils;
-import org.junit.Test;
+import org.databois.gameserve.model.InstanceRequest;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,9 +40,14 @@ public class DeployManager {
         instanceRoot = new File(getenv("INSTANCEROOT"));
     }
     
-    public DeployInstance deploy() throws IOException {
+    public DeployInstance deploy(InstanceRequest req) throws IOException {
         DeployInstance instance = new DeployInstance();
-        instance.port = lockPort(instance.uuid);
+        {
+            instance.port = lockPort(instance.uuid);
+            instance.type = req.type;
+            instance.stopTime = req.getStopTime();
+            instance.purgeTime = req.getPurgeTime();
+        }
         
         createInstanceDir(instance);
 //        ProcessBuilder pb = new ProcessBuilder();
@@ -52,6 +57,7 @@ public class DeployManager {
 //        env.putAll(environmentFor(instance));
 //
 //        Process process = pb.start();
+        //instance.save();
         return instance;
     }
     
@@ -65,6 +71,26 @@ public class DeployManager {
         
         FileUtils.copyDirectory(typeArch, targetDir);
     }
+    
+    public void stopInstance(DeployInstance instance) {
+        try {
+            Runtime.getRuntime().exec("pkill "+instance.pid);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void purgeInstance(DeployInstance instance) {
+        try {
+            File targetDir = new File(instanceRoot.toURI().resolve(instance.uuid.toString()));
+            FileUtils.deleteDirectory(targetDir);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    
+    
     
     private AtomicInteger ai = new AtomicInteger(6000);
     private int lockPort(UUID uuid) {
