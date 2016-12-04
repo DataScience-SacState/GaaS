@@ -24,7 +24,8 @@
     <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
     <link rel="stylesheet" type="text/css" href="../styles/index.css">
-
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.css" type="text/css">
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js" type="text/css">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -290,63 +291,15 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-12">
-                        <h1 class="page-header">GaaS</h1>
+                        <h1 class="page-header">SERVER SCHEDULE</h1>
                         <div class="container-fluid">
                             <div class="row">
-                                <div class="col-md-8">
-                                    Upload CSV: <input type="file" name="csv" id="csv">
-                                    CSV Preview:<br>
-                                    <div id="csv-preview">Selct a CSV File Above...</div>
-                                    <button type="button" id="send">Send</button>
+                                <div class="col-md-12">
+                                  BOOTSTRAP CALENDAR
+                                  <div id="calendar"><div>
                                 </div>
-                                <div class="col-md-4">
-                                    Give me variables to plot plox: <input id="var-input" type="text" placeholder="Input and Press Enter"><br>
-
-                                    <div id="var-list"></div>
-                                </div>
-                            </div>
-                            <div id="graphProps">
-                                <h2>Graph Props</h2>
-                                <ul>
-                                    <li><h4>Adjust Alpha</h4>
-                                        <form>
-                                            <input type="range" name="foo" min="0" max="100">
-                                            <output id ="alphaValue" for="foo" onforminput="value = foo.valueAsNumber;"></output>
-                                        </form>
-                                    </li>
-                                    <li><h4>Adjust Labels</h4>
-                                        Title<input type="text" id="titleValue">
-                                        <br/>
-                                        <br/>
-                                        Type of Graph<select id="graphType">
-                                        <option value="histogram">Histogram</option>
-                                        <option value="regression">Regression</option>
-                                        <option value="smoothLine">Smooth Line</option>
-                                        <option value="linePlot">Line Plot</option>
-                                        <option value="scatterPlot">Scatter Plot</option>
-                                        <option value="barGraph">Bar Graph</option>
-                                        <option value="pieChart">Pie Chart</option>
-                                        <option value="facet">Facet</option>
-                                        <option value="correelation">Correleation</option>
-                                        <option value="boxPlot">Box Plot</option>
-                                        </select>
-                                        <br/>
-                                        <br/>
-                                        x<input type="text" id="xValue">
-                                        <br/>
-                                        <br/>
-                                        y<input type="text" id="yValue">
-                                        <br/>
-                                        <br/>
-                                        Switch x & y values <input type="checkbox" id="switchValues">
-                                    </li>
-                                </ul>
-                                <button class="submitButton">Submit</button>
-                                <div id="graphs"></div>
                             </div>
                         </div>
-
-
                     </div>
                     <!-- /.col-lg-12 -->
                 </div>
@@ -361,7 +314,9 @@
 
     <!-- jQuery -->
     <script src="../vendor/jquery/jquery.min.js"></script>
-
+    <script src="http://momentjs.com/downloads/moment-with-locales.js"></script>
+    <!-- calendar -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
     <!-- Bootstrap Core JavaScript -->
     <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
 
@@ -371,7 +326,7 @@
     <!-- Custom Theme JavaScript -->
     <script src="../dist/js/sb-admin-2.js"></script>
 
-    <script src="../js/main.js"></script>
+    <script src="../js/timesheet.js"></script>
 
 </body>
 
