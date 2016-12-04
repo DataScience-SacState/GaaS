@@ -73,7 +73,17 @@ $(document).ready(function(){
 		obj.email = email;
 		obj.start = start;
 		obj.end = end;
-		console.log(obj);
+		$.ajax({
+			url: '/api/request',
+			type: "POST",
+			data: JSON.stringify(obj),
+			processData: false,
+			contentType: false,
+			success: function(response){
+				console.log('success')
+				console.log(response);
+			}
+		})
 	});
 });
 
