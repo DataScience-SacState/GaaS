@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.ThrowableDeserializer;
 import org.databois.gameserve.DeployManager;
+import org.databois.gameserve.EmailSender;
 import org.databois.gameserve.model.DeployInstance;
 import org.databois.gameserve.model.InstanceRequest;
 
@@ -38,6 +39,8 @@ public class APIDeploy {
                 DeployInstance di = dm.deploy(ir);
                 di.save();
                 System.out.println("saved");
+    
+                EmailSender.getInstance().sendNew(di);
     
             } catch (Throwable e) {
                 e.printStackTrace();

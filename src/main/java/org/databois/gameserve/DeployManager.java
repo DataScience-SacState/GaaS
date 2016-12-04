@@ -89,11 +89,10 @@ public class DeployManager {
             
             ProcessBuilder pb = new ProcessBuilder();
             pb.command("bash", getenv("SCRIPTDIR")+File.separator+instance.type+".sh");
-            pb.directory(instanceDir);
-            pb.redirectError(new File(instanceDir.toURI().resolve("log.err")));
-            pb.redirectOutput(new File(instanceDir.toURI().resolve("log.out")));
-            
-            pb.inheritIO();
+            pb = pb.directory(instanceDir);
+            pb = pb.redirectError(new File(instanceDir.toURI().resolve("log.err")));
+            pb = pb.redirectOutput(new File(instanceDir.toURI().resolve("log.out")));
+//            pb.inheritIO();
             
             Map<String, String> env = pb.environment();
             env.putAll(environmentFor(instance));
@@ -109,21 +108,32 @@ public class DeployManager {
                     instance.id)).execute());
             
             System.out.println(instance.pid+ " " + instance.port);
+    
+            EmailSender.getInstance().serverReady(instance);
         } catch (Throwable e) {
             e.printStackTrace();
         }
     }
     
+    private Set<UUID> stopped = new HashSet<>();
     public void stopInstance(DeployInstance instance) {
+        if (stopped.contains(instance.uuid)) return;
+        stopped.add(instance.uuid);
+        
+//        EmailSender.getInstance().sendStop(instance);
         try {
-            Runtime.getRuntime().exec("pkill "+instance.pid);
-            releasePort(instance.uuid);
+//            Runtime.getRuntime().exec("pkill "+instance.pid);
+//            releasePort(instance.uuid);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
     
+    private Set<UUID> purged = new HashSet<>();
     public void purgeInstance(DeployInstance instance) {
+        if (purged.contains(instance.uuid)) return;
+        purged.add(instance.uuid);
+        
         try {
             File targetDir = new File(instanceRoot.toURI().resolve(instance.uuid.toString()));
             FileUtils.deleteDirectory(targetDir);

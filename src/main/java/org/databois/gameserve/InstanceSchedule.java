@@ -9,12 +9,15 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import static java.time.temporal.ChronoUnit.MINUTES;
+
 /**
  * Created by merrillm on 12/3/16.
  */
 public class InstanceSchedule {
     
     private static final DeployManager dm = DeployManager.getInstance();
+    private static final EmailSender es = EmailSender.getInstance();
     private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private static ScheduledFuture sf = null;
     
@@ -38,6 +41,9 @@ public class InstanceSchedule {
         
         DeployInstance.find.where()
                 .lt("stop_time", Instant.now()).findEach(dm::stopInstance);
+        
+        DeployInstance.find.where()
+                .lt("purge_time", Instant.now().plus(30, MINUTES)).findEach(es::sendPurgeWarn);
         
         DeployInstance.find.where()
                 .lt("purge_time", Instant.now()).findEach(dm::purgeInstance);

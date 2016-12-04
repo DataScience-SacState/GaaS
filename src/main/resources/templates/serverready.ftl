@@ -1,6 +1,9 @@
 <h1>GameServe</h1>
 <p><em>Your ${type} server is ready to use!</em></p>
 
+<h3>Join here:</h3>
+${host}:${port}
+
 <h3>The server will stop at:</h3>
 ${stopTime}
 

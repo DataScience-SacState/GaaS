@@ -8,9 +8,7 @@ import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 import static java.lang.System.getenv;
 
@@ -26,7 +24,8 @@ public class EmailSender {
     private static Configuration config;
     private static Template newTemplate;
     private static Template stopTemplate;
-//    private static Template purgeTemplate;
+    private static Template purgeTemplate;
+    private static Template readyTemplate;
     
     static {
         try {
@@ -35,23 +34,27 @@ public class EmailSender {
             
             newTemplate = config.getTemplate("newinstance.ftl");
             stopTemplate = config.getTemplate("stopinstance.ftl");
-//            purgeTemplate = config.getTemplate("purgeinstance.ftl");
+            purgeTemplate = config.getTemplate("purgeincoming.ftl");
+            readyTemplate = config.getTemplate("serverready.ftl");
         } catch (Exception e) {
             e.printStackTrace();
 //            System.exit(1);
         }
     }
     
-    public void sendNew(String to, DeployInstance instance) {
+    public void sendNew(DeployInstance instance) {
         try {
             Map<String, Object> scope = new HashMap<>();
             scope.put("type", instance.type);
+            scope.put("host", "10.113.211.204");
+            scope.put("startTime", instance.startTime);
             scope.put("stopTime", instance.stopTime);
             scope.put("purgeTime", instance.purgeTime);
+            scope.put("port", instance.port+"");
             StringWriter writer = new StringWriter();
             newTemplate.process(scope, writer);
             
-            send(to, "[GameServe] New Server Instance", writer.toString());
+            send(instance.email, "[GameServe] New Server Instance", writer.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -61,12 +64,55 @@ public class EmailSender {
         try {
             Map<String, Object> scope = new HashMap<>();
             scope.put("type", instance.type);
+            scope.put("host", "10.113.211.204");
+            scope.put("startTime", instance.startTime);
             scope.put("stopTime", instance.stopTime);
             scope.put("purgeTime", instance.purgeTime);
+            scope.put("port", instance.port+"");
             StringWriter writer = new StringWriter();
             stopTemplate.process(scope, writer);
             
             send(instance.email, "[GameServe] Server Subscription Ended", writer.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private Set<UUID> warned = new HashSet<>();
+    public void sendPurgeWarn(DeployInstance instance) {
+        if (warned.contains(instance.uuid)) return;
+        warned.add(instance.uuid);
+        
+        try {
+            Map<String, Object> scope = new HashMap<>();
+            scope.put("type", instance.type);
+            scope.put("host", "10.113.211.204");
+            scope.put("startTime", instance.startTime);
+            scope.put("stopTime", instance.stopTime);
+            scope.put("purgeTime", instance.purgeTime);
+            scope.put("port", instance.port+"");
+            StringWriter writer = new StringWriter();
+            purgeTemplate.process(scope, writer);
+            
+            send(instance.email, "[GameServe] File Purge Incoming", writer.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void serverReady(DeployInstance instance) {
+        try {
+            Map<String, Object> scope = new HashMap<>();
+            scope.put("type", instance.type);
+            scope.put("host", "10.113.211.204");
+            scope.put("startTime", instance.startTime);
+            scope.put("stopTime", instance.stopTime);
+            scope.put("purgeTime", instance.purgeTime);
+            scope.put("port", instance.port+"");
+            StringWriter writer = new StringWriter();
+            readyTemplate.process(scope, writer);
+            
+            send(instance.email, "[GameServe] Server Ready!", writer.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
