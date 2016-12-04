@@ -26,7 +26,7 @@ public class EmailSender {
     private static Configuration config;
     private static Template newTemplate;
     private static Template stopTemplate;
-    private static Template purgeTemplate;
+//    private static Template purgeTemplate;
     
     static {
         try {
@@ -35,10 +35,10 @@ public class EmailSender {
             
             newTemplate = config.getTemplate("newinstance.ftl");
             stopTemplate = config.getTemplate("stopinstance.ftl");
-            purgeTemplate = config.getTemplate("purgeinstance.ftl");
+//            purgeTemplate = config.getTemplate("purgeinstance.ftl");
         } catch (Exception e) {
             e.printStackTrace();
-            System.exit(1);
+//            System.exit(1);
         }
     }
     

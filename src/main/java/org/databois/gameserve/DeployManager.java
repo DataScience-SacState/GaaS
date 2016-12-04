@@ -1,16 +1,20 @@
 package org.databois.gameserve;
 
+import com.avaje.ebean.Ebean;
+import com.avaje.ebean.EbeanServer;
 import org.databois.gameserve.model.DeployInstance;
 import org.apache.commons.io.FileUtils;
 import org.databois.gameserve.model.InstanceRequest;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.System.getenv;
+import static java.lang.System.in;
 
 /**
  * Created by merrillm on 12/3/16.
@@ -44,13 +48,17 @@ public class DeployManager {
     public DeployInstance deploy(InstanceRequest req) throws IOException {
         DeployInstance instance = new DeployInstance();
         {
+            instance.uuid = req.uuid;
+            instance.email = req.email;
             instance.port = lockPort(instance.uuid);
-            instance.type = req.type;
+            instance.type = req.type.toLowerCase();
+            
+            instance.startTime = req.start;
             instance.stopTime = req.end;
             instance.purgeTime = req.end.plus(12, ChronoUnit.HOURS);
         }
         
-        createInstanceDir(instance);
+//        createInstanceDir(instance);
 //        ProcessBuilder pb = new ProcessBuilder();
 //        pb.redirectOutput();
 //
@@ -62,20 +70,54 @@ public class DeployManager {
         return instance;
     }
     
-    public void createInstanceDir(DeployInstance instance) throws IOException {
+    public File createInstanceDir(DeployInstance instance) throws IOException {
         File typeArch = new File(archDir.toURI().resolve(instance.type));
         File targetDir = new File(instanceRoot.toURI().resolve(instance.uuid.toString()));
         
         if (targetDir.exists()) {
-            throw new IllegalArgumentException("[DeployManager] SOMETHING BAD");
+            System.err.println("Dir already exists!!!");
+            return targetDir;
         }
         
         FileUtils.copyDirectory(typeArch, targetDir);
+        return targetDir;
+    }
+    
+    public void startInstance(DeployInstance instance) {
+        try {
+            File instanceDir = createInstanceDir(instance);
+            
+            ProcessBuilder pb = new ProcessBuilder();
+            pb.command("bash", getenv("SCRIPTDIR")+File.separator+instance.type+".sh");
+            pb.directory(instanceDir);
+            pb.redirectError(new File(instanceDir.toURI().resolve("log.err")));
+            pb.redirectOutput(new File(instanceDir.toURI().resolve("log.out")));
+            
+            pb.inheritIO();
+            
+            Map<String, String> env = pb.environment();
+            env.putAll(environmentFor(instance));
+            
+            Process proc = pb.start();
+            instance.pid = getPidOfProcess(proc);
+            instance.started = true;
+            instance.save();
+    
+            System.out.println(Ebean.createSqlUpdate(String.format("update deployments set pid=%d, started=%s where id=%d",
+                    instance.pid,
+                    instance.started,
+                    instance.id)).execute());
+            
+            System.out.println(instance.pid+ " " + instance.port);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
     
     public void stopInstance(DeployInstance instance) {
         try {
             Runtime.getRuntime().exec("pkill "+instance.pid);
+            releasePort(instance.uuid);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -91,8 +133,6 @@ public class DeployManager {
     }
     
     
-    
-    
     private AtomicInteger ai = new AtomicInteger(6000);
     private int lockPort(UUID uuid) {
         int ret = ai.getAndIncrement();
@@ -106,7 +146,7 @@ public class DeployManager {
     private Map<String, String> environmentFor(DeployInstance instance) {
         HashMap<String, String> environment = new HashMap<>();
         
-        environment.put("WORKDIR", getenv("WORKDIR"));
+//        environment.put("WORKDIR", getenv("WORKDIR"));
         environment.put("EXECDIR", getenv("EXECDIR"));
         environment.put("ARCHDIR", getenv("ARCHDIR"));
         environment.put("SCRIPTDIR", getenv("SCRIPTDIR"));
@@ -116,4 +156,19 @@ public class DeployManager {
         return environment;
     }
     
+    public static long getPidOfProcess(Process p) {
+        long pid = -1;
+        
+        try {
+            if (p.getClass().getName().equals("java.lang.UNIXProcess")) {
+                Field f = p.getClass().getDeclaredField("pid");
+                f.setAccessible(true);
+                pid = f.getLong(p);
+                f.setAccessible(false);
+            }
+        } catch (Exception e) {
+            pid = -1;
+        }
+        return pid;
+    }
 }

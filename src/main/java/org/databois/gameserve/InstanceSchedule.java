@@ -20,7 +20,7 @@ public class InstanceSchedule {
     
     public static void start() {
         if (sf == null)
-            sf = scheduler.scheduleAtFixedRate(InstanceSchedule::run, 5, 5, TimeUnit.MINUTES);
+            sf = scheduler.scheduleAtFixedRate(InstanceSchedule::run, 0, 15, TimeUnit.SECONDS);
     }
     
     public static void stop() {
@@ -31,6 +31,11 @@ public class InstanceSchedule {
     }
     
     private static void run() {
+        
+        DeployInstance.find.where()
+                .eq("started", false)
+                .lt("start_time", Instant.now()).findEach(dm::startInstance);
+        
         DeployInstance.find.where()
                 .lt("stop_time", Instant.now()).findEach(dm::stopInstance);
         

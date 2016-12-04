@@ -2,10 +2,7 @@ package org.databois.gameserve.model;
 
 import com.avaje.ebean.Model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -22,15 +19,23 @@ public class DeployInstance extends Model {
     @Id
     public int id;
     
+    public Long pid;
+    public Integer port;
+    
     public String name;
     public String email;
     
     public String type = "minecraft";
     public UUID uuid;
     
-    public Instant stopTime;
-    public Instant purgeTime;
+    public boolean started = false;
     
-    public long pid;
-    public int port;
+    @Column(columnDefinition = "datetime")
+    public Instant startTime;
+    
+    @Column(columnDefinition = "datetime")
+    public Instant stopTime;
+    
+    @Column(columnDefinition = "datetime")
+    public Instant purgeTime;
 }

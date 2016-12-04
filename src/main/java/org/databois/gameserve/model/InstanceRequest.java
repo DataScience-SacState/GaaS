@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.Test;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -20,11 +21,13 @@ public class InstanceRequest extends Model {
     public long id;
     public UUID uuid = UUID.randomUUID();
     
-    
-    
     public String email;
     public String type;
+    
+    @Column(columnDefinition = "datetime")
     public Instant start;
+    
+    @Column(columnDefinition = "datetime")
     public Instant end;
     
     @Test

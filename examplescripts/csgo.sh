@@ -3,11 +3,11 @@ useradd -m steam
 
 cd /home/steam
 sudo apt-get install steamcmd
-sudo apt-get install lib32gccl
+sudo apt-get install lib32gcc1
 sudo -iu steam
 
 mkdir ~/Steam && cd ~/Steam
-curl -sqL 'https://steamcdn-a.akamaihd.net/client/installer/steamcmd_osx.tar.gz' | tar zxvf -
+curl -sqL 'https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz' | tar zxvf -
 
 cd ~
 ./steamcmd
